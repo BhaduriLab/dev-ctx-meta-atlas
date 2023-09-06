@@ -15,7 +15,7 @@ library(tidyverse)
 # Save a folder for each dataset int your metaatlas, in which all individual Seurat objects and all outputs of individual processing (correlation matrix, cluster assignment dataframe, gene score table) will be saved
 # The module gene list used in this script will be generated in the last step of metamodule.generation.R (metaatlas_metamodules, saved with the suffix "_metamodules.rds")
 
-# This script can read 3 arguments: 
+# Arguments: 
 # 1. directory containing all folders associated with each dataset to be added in metaatlas
 # 2. module gene list table, with each row containing a module gene (column named: labels) and its assigned module (column named: metamodules) 
 # 3. filepath to a normalized and scaled seurat object for which module activities are to be calculated 
