@@ -35,7 +35,7 @@ Arguments:
 3. (optional) file prefix for meta-atlas files
 4. (optional) gene score percentile threshold for cluster marker filtration (Bhaduri lab default: 0.90)
 
-# module activity.score.R
+## module activity.score.R
 Score cells in datasets for meta-module activity (avg log-normd CPMs)
 
 Execute as:
