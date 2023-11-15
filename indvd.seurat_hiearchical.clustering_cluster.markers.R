@@ -25,11 +25,9 @@ if (is.na(args[1])) {
   args[3] = 4
 }
 
-print(
-paste("the filepath of input Seurat object:", args[1]),
-paste("the destination of output files:", args[2]),
-paste("deepSplit:", args[3])
-)
+print(paste("the filepath of input Seurat object:", args[1]))
+print(paste("the destination of output files:", args[2]))
+print(paste("deepSplit:", args[3]))
 
 # SET UP
 
@@ -78,11 +76,13 @@ Indvd_SeuratObject_cor_mat[1:5, 1:5]
 
 # Perform hierarchical clustering on the distance matrix, use average linkage
 hclust_Indvd_SeuratObject_cor <- hclust(dist_Indvd_SeuratObject_cor, method = 'average')
+print(head(hclust_Indvd_SeuratObject_cor))
 
 # Generate clusters
 Indvd_SeuratObject_cor_ds <- cutreeDynamic(hclust_Indvd_SeuratObject_cor, cutHeight= NULL, minClusterSize= 10, method = "hybrid", pamStage = TRUE, distM = Indvd_SeuratObject_cor_mat, deepSplit = as.integer(args[3]))
 print(paste0(inputfile, " max # clusters"))
 max(Indvd_SeuratObject_cor_ds) #shows you number of clusters
+print(head(Indvd_SeuratObject_cor_ds))
 
 # Make dataframe with cell name and cluster ID, saving this is recommended
 labels <- hclust_Indvd_SeuratObject_cor$labels # extracts cell names
