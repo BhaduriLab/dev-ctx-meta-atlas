@@ -130,7 +130,7 @@ Indvd_SeuratObject_genescores <- Indvd_SeuratObject.markers
 Indvd_SeuratObject_genescores$GeneScore <- ((Indvd_SeuratObject_genescores $pct.1)/ (Indvd_SeuratObject_genescores$pct.2))* Indvd_SeuratObject_genescores$avg_log2FC
 
 #Create a column that shows “Indvd_Cluster_ID” to use for downstream analysis
-Indvd_SeuratObject_genescores$Indvd_Cluster_ID <- paste0(inputfile, sep="_", Indvd_SeuratObject_genescores$Indvd_SeuratObject_cor_ds)
+Indvd_SeuratObject_genescores$Indvd_Cluster_ID <- paste0(inputfile, sep="_", Indvd_SeuratObject_genescores$cluster)
 print(paste0(inputfile, " gene scores complete and prepared for downstream analysis"))
 head(Indvd_SeuratObject_genescores, n=5)
 
