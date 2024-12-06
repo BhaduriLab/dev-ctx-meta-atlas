@@ -6,7 +6,7 @@
 
 library(stringr)
 library(dplyr)
-library(Seurat)
+library(Seurat) # this script assumes the use of Seurat v4
 library(tidyr)
 library(readxl)
 library(tidyverse)
@@ -62,7 +62,9 @@ module.act <-
   
   dataset <- readRDS(file)
   dataset.name <- strsplit(file, ".rds")[1]
-  lognormd.dataset <- dataset@assays$RNA@data
+  lognormd.dataset <- dataset@assays$RNA@data 
+	# if using Seurat v5, use instead: 
+	##   lognormd.dataset <- dataset[["RNA"]]$data 
   rownames(lognormd.dataset)<-toupper(rownames(lognormd.dataset)) # genes need to be uppercase in order to match with the human-derived meta-atlas gene list
   lognormd.dataset[1:5,1:5]
   
