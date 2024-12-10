@@ -1,14 +1,14 @@
 # IDENTIFICATION OF INDIVIDUAL GENE SIGNATURES via HIERARCHICAL CLUSTERING
 
 # For Bhaduri lab default, execute script as:
-## Rscript indvd.seurat_hierarchical.clustering_cluster.markers.R [filepath of individual Seurat object, saved as rds file]
+## Rscript indvd.seurat_hierarchical.clustering_cluster.markers.R [filename of individual Seurat object, saved as rds file] 
 
-# Else, execute as: 
-## Rscript indvd.seurat_hierarchical.clustering_cluster.markers.R [filepath of individual Seurat object, saved as rds file] [working directory] [deepSplit (integer from 0 – 4)]
+# Else execute script as:
+## Rscript indvd.seurat_hierarchical.clustering_cluster.markers.R [filename of individual Seurat object, saved as rds file] [working directory] [deepSplit (integer from 0 – 4)]
 
 # Arguments: 
 # 1. filepath of individual Seurat object, saved as rds file 
-# 2. the filepath of the working directory, in which all outputs will be stored (Bhaduri default: present working directory) 
+# 2. the filepath of the working directory, containing all inputfiles and in which outputs will be stored 
 # 3. deepSplit argument for adaptive branch pruning of hierarchical clustering dendrograms – controls sensitive of cluster splitting, with 0 producing the least number of clusters and 4 producing the most (Bhaduri default: 4)
 
 ### RECOMMENDATIONS FOR METAATLAS ###
@@ -25,14 +25,15 @@ if (is.na(args[1])) {
   args[3] = 4
 }
 
-print(paste("the filepath of input Seurat object:", args[1]))
+print(paste("the filename of input Seurat object:", args[1]))
 print(paste("the destination of output files:", args[2]))
 print(paste("deepSplit:", args[3]))
 
 # SET UP
 
 inputfile <- args[1]
-setwd(args[2])
+directory <- args[2]
+setwd(directory)
 
 library(Seurat)
 library(tidyverse)
@@ -55,7 +56,13 @@ print(paste0(inputfile, " Seurat object before Cluster ID"))
 Indvd_SeuratObject@meta.data[1:5,]
 
 # Convert normalized expression data into dense matrix for correlation
-Indvd_SeuratObject_matrix <- as.matrix(Indvd_SeuratObject@assays$RNA@data)
+if (Version(Indvd_SeuratObject) < 5) {
+  Indvd_SeuratObject_matrix <-
+    as.matrix(Indvd_SeuratObject@assays$RNA@data)
+} else
+  Indvd_SeuratObject_matrix <-
+    as.matrix(Indvd_SeuratObject[["RNA"]]$data)
+
 print(paste0(inputfile, " matrix"))
 Indvd_SeuratObject_matrix[1:5, 1:5]
 saveRDS(Indvd_SeuratObject_matrix,file=paste0("matrix_", inputfile))
