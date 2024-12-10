@@ -30,12 +30,10 @@ if (is.na(args[4])){
 	args[4] = 0.90
 	}
 
-print(
-	paste("directory of datasets to be included in metaatlas:", args[1]),
-	paste(".lis file listing datasets:", args[2]),
-	paste("prefix for metaatlas output files:", args[3]),
-	paste("gene score pctl minimum for cluster marker filtration:", args[4])
-	)
+print(paste("directory of datasets to be included in metaatlas:", args[1]))
+print(paste(".lis file listing datasets:", args[2]))
+print(paste("prefix for metaatlas output files:", args[3]))
+print(paste("gene score pctl minimum for cluster marker filtration:", args[4]))
 
 #########
 # SET UP
@@ -45,7 +43,6 @@ setwd(args[1])
 dataset.lis <- read.table(args[2])
 
 library(ggplot2)
-library(Seurat)
 library(tidyverse)
 library(WGCNA)
 library(factoextra)
@@ -58,20 +55,24 @@ library(data.table)
 
 ## Aggregate the cluster markers and gene scores of individuals from the same dataset
 
+metaatlas.genescores <- NULL
 for (i in dataset.lis$V1){
 	dataset.folder <- i
-	for_aggregation <- list.files()[grepl(list.files(dataset.folder), pattern = "^genescores_")] # generate a list of all the gene score tables for a given dataset
+	for_aggregation <- list.files(dataset.folder, pattern = "^genescores_") # generate a list of all the gene score tables for a given dataset
 	for_aggregation <- paste0(dataset.folder, "/", for_aggregation) # extract full file path of these gene score tables
 	print(for_aggregation)
 	
 	# aggregate the gene scores of all the individuals from the same dataset
-	dataset.genescores <- readRDS(for_aggregation[1])
-	for (j in 2:length(for_aggregation)){
+	dataset.genescores <- NULL
+	for (j in 1:length(for_aggregation)){
 		indvd <- readRDS(for_aggregation[j])
 		print(for_aggregation[j])
 		dataset.genescores <- rbind(dataset.genescores, indvd)
 		rm(indvd)
 		}
+
+    	#change all infinite gene score values to 5000. Infinite gene scores arise when one gene is highly specific to one cluster, such that expression in other clusters is not detectable. 
+    	dataset.genescores$GeneScore[is.infinite(dataset.genescores$GeneScore)] <- 5000
 	
 	# create a column that shows "Dataset" to use for downstream analysis
 	dataset.genescores$Dataset <- dataset.folder
@@ -82,8 +83,8 @@ for (i in dataset.lis$V1){
 	counter = 0
 	for (k in for_aggregation){
 		print(k)
-		indvd.genescore <- readRDS(for_aggregation[k])
-		indvd_in_dataset.genescores <- subset(dataset.genescores, startsWith(Indvd_Cluster_ID, k))
+		indvd.genescore <- readRDS(k)
+		indvd_in_dataset.genescores <- subset(dataset.genescores, startsWith(Indvd_Cluster_ID, gsub(pattern = paste0(dataset.folder, "/genescores_"), replacement = "", k)))
 		if(
 			nrow(indvd.genescore) == nrow(indvd_in_dataset.genescores) &
 			sum(indvd.genescore$GeneScore == indvd_in_dataset.genescores$GeneScore)
@@ -103,47 +104,15 @@ for (i in dataset.lis$V1){
   		rm(indvd.genescore, indvd_in_dataset.genescores)	
   	}
   	
-  	if (counter == 0){
-  		saveRDS(dataset.genescores, file = paste0("aggregated.genescores_", dataset.folder, ".rds"))
-  		} else {
-  			print("at least more than one error – not saved")
-  			}
-}
-
-rm(for_aggregation, dataset.genescores, counter)
-
-## Aggregate the cluster markers and gene scores of all datasets
-
-for_aggregation <- list.files()[grepl(list.files(), pattern = "^aggregated.genescores_")] # generate a list of all the gene score tables to be combined for metaatlas
-print(for_aggregation)
-
-metaatlas.genescores <- readRDS(for_aggregation[1])
-for (l in 2:length(for_aggregation)){
-	dataset.genescores <- readRDS(for_aggregation[l])
-	print(for_aggregation[l])
-	metaatlas.genescores <- rbind(metaatlas.genescores, dataset.genescores)
-	rm(dataset.genescores)
+  	if (counter != 0) {
+		print("at least more than one error – not saved")
+	} else {
+		## Aggregate the cluster markers and gene scores of all datasets
+		metaatlas.genescores <- rbind(metaatlas.genescores, dataset.genescores)
 	}
 	
-# optional but highly recommended – validate the successful transfer of dataset gene scores to aggregated gene score table
-counter = 0
-for (m in 1:length(for_aggregation)){
-  print(for_aggregation[m])
-  dataset.genescores <- readRDS(for_aggregation[m])
-  if (nrow(dataset.genescores) != nrow(subset(metaatlas.genescores, Dataset == unique(dataset.genescores$Dataset)))
-  	){
-  		counter = counter + 1
-  		print(paste(m, "not succesfully transferred to aggregate gene score table"))
-  		}
-  rm(dataset.genescores)
+	rm(for_aggregation, dataset.genescores, counter)
 }
-
-if (counter == 0){
-	saveRDS(metaatlas.genescores, file = paste0(args[3], "_genescores.rds"))
-	} else {
-		print("at least more than one error – not saved")
-		}
-rm(counter)
 
 #########
 # FILTRATION OF CLUSTER MARKERS BASED ON GENE SCORE
@@ -178,7 +147,7 @@ print(ggplot(metaatlas.genescores[,c("GeneScore", "Dataset")], aes(x=GeneScore))
 		)		 
 
 # Filtering of aggregated cluster marker X gene scores table
-filtered_metaatlas.genescores <- filter(metaatlas.genescores, GeneScore >= quantile(metaatlas.genescores$GeneScore, args[4]))
+filtered_metaatlas.genescores <- filter(metaatlas.genescores, GeneScore >= quantile(metaatlas.genescores$GeneScore, as.numeric(args[4])))
 
 # Effects of filtering on cluster/cluster marker distribution
 
@@ -193,7 +162,6 @@ all.gene.scores <- as.data.frame(filtered_metaatlas.genescores$GeneScore)
 colnames(all.gene.scores) <- "gene.scores"
 print(ggplot(all.gene.scores, aes(x=gene.scores)) 
 		+ geom_density() 
-		+ xlim(0,15) 
 		+ geom_vline(aes(xintercept = median(gene.scores)), color = "blue", linetype = "dashed", size = 0.5) 
 		+ labs(title = "Distribution of Gene Scores in metaatlas post-filter")
 		)
@@ -201,7 +169,6 @@ print(ggplot(all.gene.scores, aes(x=gene.scores))
 print(ggplot(filtered_metaatlas.genescores[,c("GeneScore", "Dataset")], aes(x=GeneScore)) 
 		+ geom_density() 
 		+ facet_wrap(~Dataset) 
-		+ xlim(0,15) 
 		+ geom_vline(aes(xintercept = median(GeneScore)), color = "blue", linetype = "dashed", size = 0.5) 
 		+ labs(title = "Distribution of Gene Scores in each dataset post-filter")
 		)		
@@ -230,7 +197,7 @@ saveRDS(trimmed_filtered_metaatlas.genescores, file = paste0(args[3], "_trimmed.
 
 # Convert the gene score table into a distance matrix
 trimmed_filtered_metaatlas.genescores_matrix <- as.matrix(trimmed_filtered_metaatlas.genescores)
-print("trimmed filtered gene score table converted into matrix"))
+print("trimmed filtered gene score table converted into matrix")
 trimmed_filtered_metaatlas.genescores_matrix[1:5, 1:5]
 
 rownames(trimmed_filtered_metaatlas.genescores_matrix) <- trimmed_filtered_metaatlas.genescores_matrix[,"gene"]
