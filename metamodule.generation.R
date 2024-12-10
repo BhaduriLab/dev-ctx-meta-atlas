@@ -5,15 +5,15 @@
 
 # Arguments: 
 # 1. directory containing all folders associated with each dataset to be added in metaatlas
-# 2. filepath to a .lis file with the names of all the folders associated with each dataset to be added in metaatlas (one line for each filepath)
+# 2. filename of .lis file with the names of all the folders associated with each dataset to be added in metaatlas (one line for each filepath)
 # 3. (optional) file prefix for metaatlas files
 # 4. (optional) gene score percentile threshold for cluster marker filtration (Bhaduri lab default: 0.90)
 
 # For Bhaduri lab default, execute script as:
-## Rscript metamodule.generation.R [directory] [filepath to .lis file]
+## Rscript metamodule.generation.R [directory] [filename of .lis file]
 
 # Else, execute as:
-## Rscript metamodule.generation.R [directory] [filepath to .lis file] [file prefix for metaatlas files] [gene score percentile threshold for cluster marker filtration]
+## Rscript metamodule.generation.R [directory] [filename of .lis file] [file prefix for metaatlas files] [gene score percentile threshold for cluster marker filtration]
 
 # Parse arguments
 args = commandArgs(trailingOnly=TRUE)
