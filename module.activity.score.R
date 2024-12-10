@@ -30,11 +30,9 @@ if (is.na(args[1])| is.na(args[2]) | is.na(args[3])) {
   stop("argument missing.n", call.=FALSE)
   } 
 
-print(
-	paste("directory of datasets to be included in metaatlas:", args[1]),
-	paste("module gene list table:", args[2]),
-	paste("filepath to query dataset", args[3])	
-	)
+print(paste("directory:", args[1]))
+print(paste("module gene list table:", args[2]))
+print(paste("filepath to query dataset", args[3]))
 
 #########
 # SET UP
