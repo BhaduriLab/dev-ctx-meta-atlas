@@ -16,12 +16,12 @@ library(tidyverse)
 # The module gene list used in this script will be generated in the last step of metamodule.generation.R (metaatlas_metamodules, saved with the suffix "_metamodules.rds")
 
 # Arguments: 
-# 1. directory containing the query dataset (argument #3)
-# 2. filepath to module gene list table, with each row containing a module gene (column named: labels) and its assigned module (column named: metamodules) 
+# 1. filepath to module gene list table, with each row containing a module gene (column named: labels) and its assigned module (column named: metamodules) 
+# 2. directory containing the query dataset (argument #3)
 # 3. filename of query dataset: a normalized and scaled seurat object for which module activities are to be calculated 
 
 # Execute as:
-## Rscript module.activity.score.R [directory] [filepath to module gene list table] [filename of query dataset] 
+## Rscript module.activity.score.R [filepath to module gene list table] [directory] [filename of query dataset] 
 
 # Parse arguments
 args = commandArgs(trailingOnly=TRUE)
@@ -30,27 +30,25 @@ if (is.na(args[1])| is.na(args[2]) | is.na(args[3])) {
   stop("argument missing.n", call.=FALSE)
   } 
 
-print(paste("directory:", args[1]))
-print(paste("module gene list table:", args[2]))
+print(paste("module gene list table:", args[1]))
+print(paste("directory:", args[2]))
 print(paste("filename of query dataset", args[3]))
 
 #########
 # SET UP
 #########
 
-setwd(args[1])
-module.gene.list.table <- args[2]
+## Load list of module genes
+modules <- group_by(readRDS(args[1]), metamodules)
+head(modules)
+modules$metamodules <- as.character(modules$metamodules)
+
+setwd(args[2])
 query.dataset <- args[3]
 
 #########
 # Activity of gene lists in dataset
 #########
-
-## Load list of module genes
-
-modules <- group_by(readRDS(module.gene.list.table), metamodules)
-head(modules)
-modules$metamodules <- as.character(modules$metamodules)
 
 ## Establish a function to calculate avg log-normd CPMs for each module gene list
 
