@@ -15,7 +15,6 @@
 # SET UP 
 #####
 
-library(Seurat) # this script assumes the use of Seurat v4
 library(tidyverse)
 library(dplyr)
 
