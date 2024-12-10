@@ -16,12 +16,12 @@ library(tidyverse)
 # The module gene list used in this script will be generated in the last step of metamodule.generation.R (metaatlas_metamodules, saved with the suffix "_metamodules.rds")
 
 # Arguments: 
-# 1. directory containing all folders associated with each dataset to be added in metaatlas
+# 1. directory containing the query dataset (argument #3)
 # 2. module gene list table, with each row containing a module gene (column named: labels) and its assigned module (column named: metamodules) 
-# 3. filepath to a normalized and scaled seurat object for which module activities are to be calculated 
+# 3. filename of query dataset: a normalized and scaled seurat object for which module activities are to be calculated 
 
 # Execute as:
-## Rscript module.activity.score.R [directory] [module gene list table] [filepath to query dataset] 
+## Rscript module.activity.score.R [directory] [module gene list table] [filename of query dataset] 
 
 # Parse arguments
 args = commandArgs(trailingOnly=TRUE)
@@ -32,7 +32,7 @@ if (is.na(args[1])| is.na(args[2]) | is.na(args[3])) {
 
 print(paste("directory:", args[1]))
 print(paste("module gene list table:", args[2]))
-print(paste("filepath to query dataset", args[3]))
+print(paste("filename of query dataset", args[3]))
 
 #########
 # SET UP
