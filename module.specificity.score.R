@@ -1,7 +1,7 @@
 # METAMODULE SPECIFICITY SCORING
 
 # Arguments: 
-# 1. working directory
+# 1. working directory containing CSVs of query dataset metadata and module activity scores (arguments #2 and #3)
 # 2. filename of a CSV of metadata for each cell in query dataset
 # 3. filename a CSV of module activity scores for each cell in query dataset (cells in rows; modules in columns)
 # 4. column name of desired metadata group across which to calculate specificity scores
