@@ -4,16 +4,16 @@
 # Save a folder for each dataset int your metaatlas, in which all individual Seurat objects and all outputs of individual processing (correlation matrix, cluster assignment dataframe, gene score table) will be saved
 
 # Arguments: 
-# 1. directory containing all folders associated with each dataset to be added in metaatlas
-# 2. filepath to .lis file with the names of all the folders associated with each dataset to be added in metaatlas (one line for each filepath)
+# 1. filepath to .lis file with the names of all the folders associated with each dataset to be added in metaatlas (one line for each filepath)
+# 2. directory containing all folders associated with each dataset to be added in metaatlas
 # 3. (optional) file prefix for metaatlas files
 # 4. (optional) gene score percentile threshold for cluster marker filtration (Bhaduri lab default: 0.90)
 
 # For Bhaduri lab default, execute script as:
-## Rscript metamodule.generation.R [directory] [filepath to .lis file]
+## Rscript metamodule.generation.R [filepath to .lis file] [directory] 
 
 # Else, execute as:
-## Rscript metamodule.generation.R [directory] [filepath to .lis file] [file prefix for metaatlas files] [gene score percentile threshold for cluster marker filtration]
+## Rscript metamodule.generation.R [filepath to .lis file] [file prefix for metaatlas files] [directory] [gene score percentile threshold for cluster marker filtration]
 
 # Parse arguments
 args = commandArgs(trailingOnly=TRUE)
@@ -30,8 +30,8 @@ if (is.na(args[4])){
 	args[4] = 0.90
 	}
 
-print(paste("directory of datasets to be included in metaatlas:", args[1]))
-print(paste(".lis file listing datasets:", args[2]))
+print(paste(".lis file listing datasets:", args[1]))
+print(paste("directory of datasets to be included in metaatlas:", args[2]))
 print(paste("prefix for metaatlas output files:", args[3]))
 print(paste("gene score pctl minimum for cluster marker filtration:", args[4]))
 
@@ -39,8 +39,8 @@ print(paste("gene score pctl minimum for cluster marker filtration:", args[4]))
 # SET UP
 #########
 
-setwd(args[1])
-dataset.lis <- read.table(args[2])
+dataset.lis <- read.table(args[1])
+setwd(args[2])
 
 library(ggplot2)
 library(tidyverse)
