@@ -7,7 +7,7 @@
 ## Rscript indvd.seurat_hierarchical.clustering_cluster.markers.R [filename of individual Seurat object, saved as rds file] [working directory] [deepSplit (integer from 0 – 4)]
 
 # Arguments: 
-# 1. filepath of individual Seurat object, saved as rds file 
+# 1. filename of individual Seurat object, saved as rds file 
 # 2. the filepath of the working directory, containing all inputfiles and in which outputs will be stored 
 # 3. deepSplit argument for adaptive branch pruning of hierarchical clustering dendrograms – controls sensitive of cluster splitting, with 0 producing the least number of clusters and 4 producing the most (Bhaduri default: 4)
 
