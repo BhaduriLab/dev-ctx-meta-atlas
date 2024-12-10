@@ -17,11 +17,11 @@ library(tidyverse)
 
 # Arguments: 
 # 1. directory containing the query dataset (argument #3)
-# 2. module gene list table, with each row containing a module gene (column named: labels) and its assigned module (column named: metamodules) 
+# 2. filepath to module gene list table, with each row containing a module gene (column named: labels) and its assigned module (column named: metamodules) 
 # 3. filename of query dataset: a normalized and scaled seurat object for which module activities are to be calculated 
 
 # Execute as:
-## Rscript module.activity.score.R [directory] [module gene list table] [filename of query dataset] 
+## Rscript module.activity.score.R [directory] [filepath to module gene list table] [filename of query dataset] 
 
 # Parse arguments
 args = commandArgs(trailingOnly=TRUE)
