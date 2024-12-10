@@ -2,8 +2,8 @@
 
 # Arguments: 
 # 1. working directory
-# 2. filepath to a CSV of metadata for each cell in query dataset
-# 3. filepath to a CSV of module activity scores for each cell in query dataset (cells in rows; modules in columns)
+# 2. filename of a CSV of metadata for each cell in query dataset
+# 3. filename a CSV of module activity scores for each cell in query dataset (cells in rows; modules in columns)
 # 4. column name of desired metadata group across which to calculate specificity scores
 # 5. cutoff value for module activity binarization (default: 0.9)
 # 6. output filename (needs to end in .csv)
@@ -30,13 +30,11 @@ if (is.na(args[1]) |
   stop("argument missing.n", call. = FALSE)
 } 
 
-print(
-  paste("working directory:", args[1]),
-  paste("metadata CSV", args[2]),
-  paste("module activity table CSV", args[3]),
-  paste("grouping", args[4]),
-  paste("cutoff value for binarization: ", args[5])
-)
+print(paste("working directory:", args[1]))
+print(paste("metadata CSV", args[2]))
+print(paste("module activity table CSV", args[3]))
+print(paste("grouping", args[4]))
+print(paste("cutoff value for binarization: ", args[5]))
 
 #########
 # SET UP
@@ -171,12 +169,10 @@ write.csv(mod.spec.table,
           row.names = TRUE)
 
 # for visualization, retain only positive values
-
 mod.spec.table[is.na(mod.spec.table)] <- 0
 mod.spec.table[mod.spec.table < 0] <- 0
 
 # resolve infinite values
-##### RESOLVE INF
 max.value <- max(as.numeric(unlist(mod.spec.table[mod.spec.table != Inf])))
 mod.spec.table[mod.spec.table == Inf] <- max.value
 
